@@ -1,17 +1,166 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
-<meta charset="UTF-8">
-<title>RainBow</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RainBow - 虹の出現を通知するアプリ</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'geo_location', 'data-turbolinks-track': 'reload' %>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
+  
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    
+    .rainbow-icon {
+      width: 120px;
+      height: 120px;
+      margin: 20px auto;
+    }
+    
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #45a049;
+    }
+    
+    .info-box {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    
+    .error-message {
+      color: #f44336;
+      display: none;
+      margin: 10px 0;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      color: #555;
+      font-size: 14px;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-<center>
- <h1 style="margin-top: 300px">虹が出るタイミングをお知らせするアプリ</h1>
-</center>
-<center>
- <input type="button" id="push" onclick="return push()" value=>
-</center>
+  <div class="container">
+    <h1>RainBow - 虹の出現を通知するアプリ</h1>
+    
+    <div class="rainbow-icon">
+      <!-- レインボーアイコンの代わりとなるSVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+        <path d="M 100 50 A 50 50 0 0 0 0 50" fill="none" stroke="#FF0000" stroke-width="5" />
+        <path d="M 90 50 A 40 40 0 0 0 10 50" fill="none" stroke="#FF7F00" stroke-width="5" />
+        <path d="M 80 50 A 30 30 0 0 0 20 50" fill="none" stroke="#FFFF00" stroke-width="5" />
+        <path d="M 70 50 A 20 20 0 0 0 30 50" fill="none" stroke="#00FF00" stroke-width="5" />
+        <path d="M 60 50 A 10 10 0 0 0 40 50" fill="none" stroke="#0000FF" stroke-width="5" />
+      </svg>
+    </div>
+    
+    <div class="info-box">
+      <p>このアプリは、あなたの位置情報と天気情報を利用して、虹が出る可能性があるタイミングをお知らせします。</p>
+      <p>虹が見える条件が整った時、通知でお知らせします。</p>
+      
+      <button id="refresh-location" class="btn">現在地の再取得</button>
+      <button id="test-notification" class="btn" onclick="testNotification()">通知テスト</button>
+      
+      <div id="location-error" class="error-message"></div>
+      
+      <div id="status" class="status">位置情報を取得中...</div>
+    </div>
+    
+    <div class="footer">
+      <p>※位置情報を許可してください。天気の変化を定期的に確認します。</p>
+      <p>※通知を受け取るには、ブラウザの通知設定を許可してください。</p>
+    </div>
+  </div>
+  
+  <script>
+    // 通知テスト用の関数
+    function testNotification() {
+      if (Push) {
+        Push.create("RainBow 通知テスト", {
+          body: "通知は正常に動作しています。虹が出るタイミングがきたら、このように通知します。",
+          icon: '/rainbow_icon.png',
+          timeout: 8000,
+          onClick: function () {
+            window.focus();
+            this.close();
+          }
+        });
+      } else {
+        alert("Push.jsの読み込みに失敗しました。ブラウザを更新してください。");
+      }
+    }
+    
+    // ステータス表示用の関数
+    document.addEventListener('DOMContentLoaded', function() {
+      // 位置情報取得後にステータス表示を更新
+      const updateStatus = setInterval(function() {
+        const lat = sessionStorage.getItem('userLatitude');
+        const lon = sessionStorage.getItem('userLongitude');
+        const statusElement = document.getElementById('status');
+        
+        if (lat && lon) {
+          statusElement.textContent = `位置情報の取得に成功しました。天気情報を監視しています。`;
+          clearInterval(updateStatus);
+        }
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
