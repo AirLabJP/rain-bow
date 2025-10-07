@@ -14,8 +14,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
   
   <style>
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
@@ -34,7 +38,14 @@
     
     h1 {
       color: #333;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      color: #555;
       margin-bottom: 20px;
+      font-size: 14px;
     }
     
     .rainbow-icon {
@@ -46,43 +57,96 @@
     .btn {
       background-color: #4CAF50;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
-      margin: 10px;
-      transition: background-color 0.3s;
+      margin: 10px 5px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     
     .btn:hover {
       background-color: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-notification {
+      background-color: #FF9800;
+    }
+    
+    .btn-notification:hover {
+      background-color: #F57C00;
     }
     
     .info-box {
-      background-color: rgba(255, 255, 255, 0.8);
-      border-radius: 8px;
-      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 24px;
       margin: 20px auto;
-      max-width: 500px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .info-box p {
+      line-height: 1.6;
+      margin: 12px 0;
     }
     
     .status {
       margin-top: 20px;
       font-weight: bold;
+      color: #333;
+      padding: 12px;
+      background-color: rgba(76, 175, 80, 0.1);
+      border-radius: 8px;
+      border-left: 4px solid #4CAF50;
     }
     
     .error-message {
       color: #f44336;
       display: none;
-      margin: 10px 0;
+      margin: 12px 0;
+      padding: 12px;
+      background-color: rgba(244, 67, 54, 0.1);
+      border-radius: 8px;
+      border-left: 4px solid #f44336;
+    }
+    
+    .button-group {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     
     .footer {
       margin-top: 40px;
       color: #555;
       font-size: 14px;
+      line-height: 1.8;
+    }
+    
+    .footer p {
+      margin: 8px 0;
+    }
+    
+    .notification-badge {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 8px;
     }
     
     @media (max-width: 600px) {
@@ -93,30 +157,45 @@
       h1 {
         font-size: 24px;
       }
+      
+      .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+      
+      .button-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>RainBow - 虹の出現を通知するアプリ</h1>
+    <h1>🌈 RainBow</h1>
+    <p class="subtitle">虹の出現を通知するアプリ</p>
     
     <div class="rainbow-icon">
-      <!-- レインボーアイコンの代わりとなるSVG -->
+      <!-- レインボーアイコンのSVG -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-        <path d="M 100 50 A 50 50 0 0 0 0 50" fill="none" stroke="#FF0000" stroke-width="5" />
-        <path d="M 90 50 A 40 40 0 0 0 10 50" fill="none" stroke="#FF7F00" stroke-width="5" />
-        <path d="M 80 50 A 30 30 0 0 0 20 50" fill="none" stroke="#FFFF00" stroke-width="5" />
-        <path d="M 70 50 A 20 20 0 0 0 30 50" fill="none" stroke="#00FF00" stroke-width="5" />
-        <path d="M 60 50 A 10 10 0 0 0 40 50" fill="none" stroke="#0000FF" stroke-width="5" />
+        <path d="M 100 50 A 50 50 0 0 0 0 50" fill="none" stroke="#FF0000" stroke-width="5" stroke-linecap="round"/>
+        <path d="M 90 50 A 40 40 0 0 0 10 50" fill="none" stroke="#FF7F00" stroke-width="5" stroke-linecap="round"/>
+        <path d="M 80 50 A 30 30 0 0 0 20 50" fill="none" stroke="#FFFF00" stroke-width="5" stroke-linecap="round"/>
+        <path d="M 70 50 A 20 20 0 0 0 30 50" fill="none" stroke="#00FF00" stroke-width="5" stroke-linecap="round"/>
+        <path d="M 60 50 A 10 10 0 0 0 40 50" fill="none" stroke="#0000FF" stroke-width="5" stroke-linecap="round"/>
       </svg>
     </div>
     
     <div class="info-box">
-      <p>このアプリは、あなたの位置情報と天気情報を利用して、虹が出る可能性があるタイミングをお知らせします。</p>
-      <p>虹が見える条件が整った時、通知でお知らせします。</p>
+      <p>このアプリは、あなたの位置情報と天気情報を利用して、<br>虹が出る可能性があるタイミングをお知らせします。</p>
+      <p><strong>虹が見える条件：</strong><br>
+      ☀️ 晴れている ＋ 💧 湿度が高い ＋ 🌅 朝夕の時間帯</p>
       
-      <button id="refresh-location" class="btn">現在地の再取得</button>
-      <button id="test-notification" class="btn" onclick="testNotification()">通知テスト</button>
+      <div class="button-group">
+        <button id="enable-notification" class="btn btn-notification">🔔 通知を有効にする</button>
+        <button id="refresh-location" class="btn">📍 現在地の再取得</button>
+        <button id="test-notification" class="btn" onclick="testNotification()">🧪 通知テスト</button>
+      </div>
       
       <div id="location-error" class="error-message"></div>
       
@@ -124,42 +203,66 @@
     </div>
     
     <div class="footer">
-      <p>※位置情報を許可してください。天気の変化を定期的に確認します。</p>
-      <p>※通知を受け取るには、ブラウザの通知設定を許可してください。</p>
+      <p>💡 <strong>使い方：</strong></p>
+      <p>1. 位置情報を許可してください（現在地の天気を取得します）</p>
+      <p>2. 「通知を有効にする」ボタンで通知を許可してください</p>
+      <p>3. 虹が出る条件が揃ったら自動で通知します</p>
+      <p style="margin-top: 16px; font-size: 12px; color: #777;">
+        ※ 15分ごとに天気情報を自動チェックします<br>
+        ※ 通知は虹が見える可能性が高い時のみ送信されます
+      </p>
     </div>
   </div>
   
   <script>
     // 通知テスト用の関数
     function testNotification() {
-      if (Push) {
-        Push.create("RainBow 通知テスト", {
-          body: "通知は正常に動作しています。虹が出るタイミングがきたら、このように通知します。",
-          icon: '/rainbow_icon.png',
-          timeout: 8000,
-          onClick: function () {
-            window.focus();
-            this.close();
-          }
-        });
+      if (typeof Push === 'undefined') {
+        alert("Push.jsの読み込みに失敗しました。ページを再読み込みしてください。");
+        return;
+      }
+      
+      // 通知の許可状態をチェック
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          Push.create("RainBow 通知テスト", {
+            body: "通知は正常に動作しています。虹が出るタイミングがきたら、このように通知します。",
+            icon: '/rainbow_icon.png',
+            timeout: 8000,
+            onClick: function () {
+              window.focus();
+              this.close();
+            }
+          });
+        } else {
+          alert("通知が許可されていません。先に「通知を有効にする」ボタンをクリックしてください。");
+        }
       } else {
-        alert("Push.jsの読み込みに失敗しました。ブラウザを更新してください。");
+        alert("このブラウザは通知機能に対応していません。");
       }
     }
     
-    // ステータス表示用の関数
-    document.addEventListener('DOMContentLoaded', function() {
-      // 位置情報取得後にステータス表示を更新
-      const updateStatus = setInterval(function() {
-        const lat = sessionStorage.getItem('userLatitude');
-        const lon = sessionStorage.getItem('userLongitude');
-        const statusElement = document.getElementById('status');
-        
-        if (lat && lon) {
-          statusElement.textContent = `位置情報の取得に成功しました。天気情報を監視しています。`;
-          clearInterval(updateStatus);
+    // 通知許可状態の表示を更新
+    function updateNotificationButton() {
+      const btn = document.getElementById('enable-notification');
+      if (!btn) return;
+      
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          btn.textContent = "✅ 通知が有効です";
+          btn.disabled = true;
+          btn.style.backgroundColor = "#4CAF50";
+        } else if (Notification.permission === "denied") {
+          btn.textContent = "❌ 通知が拒否されています";
+          btn.disabled = true;
+          btn.style.backgroundColor = "#9E9E9E";
         }
-      }, 1000);
+      }
+    }
+    
+    // ページ読み込み時に実行
+    document.addEventListener('DOMContentLoaded', function() {
+      updateNotificationButton();
     });
   </script>
 </body>
